@@ -50,6 +50,13 @@ function listAssets() {
     });
 }
 
+/**
+* Import assets into the database.
+*/
+function importAssets() {
+  console.log('import to do');
+}
+
 function refreshAssets(ageString) {
   const now = new Date().getTime();
   const ageMs = parseDuration(ageString);
@@ -89,6 +96,11 @@ program
   .command('list')
   .description('list all the assets in the database')
   .action(listAssets);
+
+program
+  .command('import')
+  .description('import assets into database via strategy file')
+  .action(importAssets);
 
 program
   .command('refresh <age>')
