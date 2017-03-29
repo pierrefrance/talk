@@ -8,40 +8,46 @@ const program = require('./commander');
 const parseDuration = require('parse-duration');
 const Table = require('cli-table');
 const AssetModel = require('../models/asset');
+const AssetService = require('../services/assets');
 const mongoose = require('../services/mongoose');
 const scraper = require('../services/scraper');
 const util = require('./util');
+const fs = require('fs');
 
 // Register the shutdown criteria.
 util.onshutdown([
   () => mongoose.disconnect()
 ]);
 
+// Reads strategy file, validates it and returns an object.
 function normalizeStrategy(strategy_file) {
-  console.log(strategy_file);
-  return new Promise((resolve) => {
-    let s = [];
-    return resolve(s);
+  return new Promise((resolve, reject) => {
+    fs.readFile(strategy_file, function(err, data) {
+      if (err) {
+        reject(err);
+      }
+      resolve(JSON.parse(data));
+    });
   });
 }
 
-function transform(old_asset, strategy, collection) {
-  console.log(old_asset, strategy, collection);
-  const asset = {
-    '_id' : mongoose.Types.ObjectId('588be4da7ef1688c449aed8a'),
-    'closedMessage' : '',
-    'closedAt' : null,
-    'publication_date' : Date('2017-01-27T16:24:58.093+0000'),
-    'scraped' : null,
-    'id' : '588be4da7ef1688c449aed89',
-    'modified_date' : Date('2017-01-27T16:24:58.093+0000'),
-    'settings' : null,
-    'url' : 'http://washingtonpost.com/business/lufthansa-cancels-136-flights-due-to-cabin-crew-strike/2015/11/10/84f01b70-8781-11e5-bd91-d385b244482f_story.html',
-    'created_at' : Date('2017-01-27T16:24:58.093+0000'),
-    'type' : 'ASSETS'
-  };
-  return new Promise((resolve) => {
-    return resolve(asset);
+function transform(old_asset, strategy) {
+  let fields = strategy.fields;
+  let URLField = fields.url.source;
+
+  return AssetService.findOrCreateByUrl(old_asset[URLField])
+  .then((asset) => {
+    asset['section'] = old_asset[fields['section']['source']];
+    asset['metadata'] = {};
+    for (let field in fields.metadata) {
+      asset['metadata'][field['source']] = old_asset[field['source']];
+    }
+    return asset;
+  })
+  .catch((err) => {
+    console.log('Failed transforming ', old_asset);
+    console.log(err);
+    util.shutdown(1);
   });
 }
 
@@ -104,23 +110,9 @@ function importAssets() {
       stream.on('data', function(doc) {
 
         // work with the document to transform and import it
-        console.log(doc);
-        transform(doc, strategy, 'ASSETS')
+        transform(doc, strategy.map.entities.assets)
         .then((asset) => {
-          AssetModel
-          .insert(asset)
-          .then(() => {
-            console.log('Imported %d assets.', assets.length);
-            util.shutdown();
-          })
-          .catch((err) => {
-            console.error(err);
-            util.shutdown(1);
-          })
-          .catch((err) => {
-            console.error(err);
-            util.shutdown(1);
-          });
+          console.log('Imported asset %s .', asset.url);
         })
         .catch((err) => {
           console.error(err);
@@ -129,6 +121,7 @@ function importAssets() {
 
         // ends the stream code
       });
+      util.shutdown();
     });
   })
   .catch((err) => {

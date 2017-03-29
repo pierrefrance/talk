@@ -1,0 +1,34 @@
+{
+  "name": "Washington Post",
+  "map": {
+    "entities": {
+      "assets": {
+        "source": "assets",
+        "fields": {
+          "url": {
+            "source": "url",
+            "relation": "Identity",
+            "type": "String"
+          },
+          "section": {
+            "source": "section",
+            "relation": "Identity",
+            "type": "String"
+          },
+          "metadata": [
+            {
+              "source": "source",
+              "relation": "Composed",
+              "type": "String"
+            },
+            {
+              "source": "authors",
+              "relation": "Composed",
+              "type": "Array"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
