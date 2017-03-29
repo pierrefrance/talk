@@ -17,6 +17,34 @@ util.onshutdown([
   () => mongoose.disconnect()
 ]);
 
+function normalizeStrategy(strategy_file) {
+  console.log(strategy_file);
+  return new Promise((resolve) => {
+    let s = [];
+    return resolve(s);
+  });
+}
+
+function transform(old_asset, strategy, collection) {
+  console.log(old_asset, strategy, collection);
+  const asset = {
+    '_id' : mongoose.Types.ObjectId('588be4da7ef1688c449aed8a'),
+    'closedMessage' : '',
+    'closedAt' : null,
+    'publication_date' : Date('2017-01-27T16:24:58.093+0000'),
+    'scraped' : null,
+    'id' : '588be4da7ef1688c449aed89',
+    'modified_date' : Date('2017-01-27T16:24:58.093+0000'),
+    'settings' : null,
+    'url' : 'http://washingtonpost.com/business/lufthansa-cancels-136-flights-due-to-cabin-crew-strike/2015/11/10/84f01b70-8781-11e5-bd91-d385b244482f_story.html',
+    'created_at' : Date('2017-01-27T16:24:58.093+0000'),
+    'type' : 'ASSETS'
+  };
+  return new Promise((resolve) => {
+    return resolve(asset);
+  });
+}
+
 /**
  * Lists all the assets registered in the database.
  */
@@ -54,7 +82,59 @@ function listAssets() {
 * Import assets into the database.
 */
 function importAssets() {
-  console.log('import to do');
+
+  // Mongo data to import.
+  let url = process.env.TALK_IMPORT_MONGO_URL;
+
+  // Get strategy to use.
+  normalizeStrategy(process.env.TALK_IMPORT_STRATEGY_FILE)
+  .then((strategy) => {
+
+    // Connect to the Mongo instance.
+    let db = mongoose.createConnection(url);
+
+    db.once('open', function(){
+      let assets = db.collection('assets');
+      let stream = assets.find().stream();
+
+      stream.on('error', function(){
+        console.log('Error on streaming');
+        util.shutdown(1);
+      });
+      stream.on('data', function(doc) {
+
+        // work with the document to transform and import it
+        console.log(doc);
+        transform(doc, strategy, 'ASSETS')
+        .then((asset) => {
+          AssetModel
+          .insert(asset)
+          .then(() => {
+            console.log('Imported %d assets.', assets.length);
+            util.shutdown();
+          })
+          .catch((err) => {
+            console.error(err);
+            util.shutdown(1);
+          })
+          .catch((err) => {
+            console.error(err);
+            util.shutdown(1);
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+          util.shutdown(1);
+        });
+
+        // ends the stream code
+      });
+    });
+  })
+  .catch((err) => {
+    console.error(err);
+    util.shutdown(1);
+  });
 }
 
 function refreshAssets(ageString) {
