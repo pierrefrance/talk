@@ -35,20 +35,16 @@ function transform(old_asset, strategy) {
   let fields = strategy.fields;
   let URLField = fields.url.source;
 
-  return AssetService.findOrCreateByUrl(old_asset[URLField])
-  .then((asset) => {
-    asset['section'] = old_asset[fields['section']['source']];
-    asset['metadata'] = {};
-    for (let field in fields.metadata) {
-      asset['metadata'][field['source']] = old_asset[field['source']];
-    }
-    return asset;
-  })
-  .catch((err) => {
-    console.log('Failed transforming ', old_asset);
-    console.log(err);
-    util.shutdown(1);
-  });
+  return AssetService
+    .findOrCreateByUrl(old_asset[URLField])
+    .then((asset) => {
+      asset['section'] = old_asset[fields['section']['source']];
+      asset['metadata'] = {};
+      for (let field in fields.metadata) {
+        asset['metadata'][field['source']] = old_asset[field['source']];
+      }
+      return asset;
+    });
 }
 
 /**
@@ -87,47 +83,47 @@ function listAssets() {
 /**
 * Import assets into the database.
 */
-function importAssets() {
+function importAssets(file) {
 
   // Mongo data to import.
   let url = process.env.TALK_IMPORT_MONGO_URL;
 
   // Get strategy to use.
-  normalizeStrategy(process.env.TALK_IMPORT_STRATEGY_FILE)
-  .then((strategy) => {
+  normalizeStrategy(file)
+    .then((strategy) => new Promise((resolve, reject) => {
 
-    // Connect to the Mongo instance.
-    let db = mongoose.createConnection(url);
+      // Connect to the Mongo instance.
+      let db = mongoose.createConnection(url);
 
-    db.once('open', function(){
-      let assets = db.collection('assets');
-      let stream = assets.find().stream();
+      db.once('open', () => {
+        let assets = db.collection('assets');
+        let stream = assets.find().stream();
+        
+        stream.on('data', (doc) => {
 
-      stream.on('error', function(){
-        console.log('Error on streaming');
-        util.shutdown(1);
-      });
-      stream.on('data', function(doc) {
-
-        // work with the document to transform and import it
-        transform(doc, strategy.map.entities.assets)
-        .then((asset) => {
-          console.log('Imported asset %s .', asset.url);
-        })
-        .catch((err) => {
-          console.error(err);
-          util.shutdown(1);
+          // work with the document to transform and import it
+          transform(doc, strategy.map.entities.assets)
+            .then((asset) => {
+              console.log('Imported asset %s.', asset.url);
+            });
         });
 
-        // ends the stream code
+        stream.on('error', (err) => {
+          return reject(err);
+        });
+
+        stream.on('end', () => {
+          return resolve();
+        });
       });
+    }))
+    .then(() => {
       util.shutdown();
+    })
+    .catch((err) => {
+      console.error(err);
+      util.shutdown(1);
     });
-  })
-  .catch((err) => {
-    console.error(err);
-    util.shutdown(1);
-  });
 }
 
 function refreshAssets(ageString) {
@@ -171,7 +167,7 @@ program
   .action(listAssets);
 
 program
-  .command('import')
+  .command('import <file>')
   .description('import assets into database via strategy file')
   .action(importAssets);
 
