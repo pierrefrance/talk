@@ -9,11 +9,11 @@ const Subscription = {};
 plugins.get('server', 'subscriptionResolvers').map(({plugin, subscriptionResolvers}) => {
   debug(`added plugin '${plugin.name}'`);
 
-  for (i in subscriptionResolvers) {
+  for (let i in subscriptionResolvers) {
     Subscription[i] = subscriptionResolvers[i];
   }
 
-  return;
-})
+  return null;
+});
 
 module.exports = Subscription;
