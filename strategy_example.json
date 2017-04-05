@@ -1,5 +1,6 @@
 {
   "name": "Washington Post",
+  "database": "mongodb://localhost/db",
   "map": {
     "entities": {
       "assets": {

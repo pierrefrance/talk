@@ -92,11 +92,13 @@ function listAssets() {
 */
 function importAssets(file) {
 
-  // Mongo data to import.
-  let url = process.env.TALK_IMPORT_MONGO_URL;
-
   normalizeStrategy(file)
     .then((strategy) => new Promise((resolve, reject) => {
+
+      console.log('Importing assets for strategy %s.', strategy.name);
+
+      // Mongo data to import.
+      let url = strategy.database;
 
       // Connect to the Mongo instance.
       let db = mongoose.createConnection(url);
@@ -111,6 +113,10 @@ function importAssets(file) {
           transform(doc, strategy.map.entities.assets)
             .then((asset) => {
               console.log('Imported asset %s.', asset.url);
+            })
+            .catch((err) => {
+              console.error(err);
+              util.shutdown(1);
             });
         });
 

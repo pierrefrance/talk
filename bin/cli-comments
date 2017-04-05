@@ -120,7 +120,7 @@ function importComments() {
 //==============================================================================
 
 program
-  .command('import')
+  .command('import <file>')
   .description('import comments into database via strategy file')
   .action(importComments);
 
