@@ -21,6 +21,8 @@ try {
   }
 }
 
+console.log(plugins);
+
 /**
  * isInternal checks to see if a given plugin is internal, and returns true
  * if it is. 
