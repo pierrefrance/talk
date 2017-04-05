@@ -10,6 +10,7 @@ const program = require('./commander');
 program
   .command('serve', 'serve the application')
   .command('assets', 'interact with assets')
+  .command('comments', 'import comments')
   .command('setup', 'setup the application')
   .command('jobs', 'work with the job queues')
   .command('users', 'work with the application auth')

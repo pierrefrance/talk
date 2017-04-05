@@ -28,6 +28,58 @@
             }
           ]
         }
+      },
+      "comments": {
+        "source": "comments",
+        "fields": {
+          "author_id": {
+            "source":"actor",
+            "relation":"FindOrCreateUser",
+            "type":"Object"
+          },
+          "asset_id": {
+            "source":"object.context.0.uri",
+            "relation":"FindOrCreateAsset",
+            "type":"URL"
+          },
+          "body": {
+            "source":"object.content",
+            "relation":"Identity",
+            "type":"String"
+          },
+          "status": {
+            "source":"object.status",
+            "relation":"Map",
+            "type":"String"
+          },
+          "tags": {
+            "source":"object.tags.name",
+            "relation":"",
+            "type":"Array"
+          },
+          "parent_id": {
+            "source":"targets.0.conversationID",
+            "relation":"Parent",
+            "type":"String"
+          },
+          "created_at": {
+            "source":"postedTime",
+            "relation":"Identity",
+            "type":"Date"
+          },
+          "updated_at": {
+            "source":"updated",
+            "relation":"Identity",
+            "type":"Date"
+          },
+          "metadata": [
+            {
+              "source": "object.id",
+              "relation": "Identity",
+              "type": "String"
+            }
+          ]
+        }
       }
     }
   }

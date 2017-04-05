@@ -8,10 +8,12 @@ const program = require('./commander');
 const parseDuration = require('parse-duration');
 const Table = require('cli-table');
 const AssetModel = require('../models/asset');
+
 const AssetService = require('../services/assets');
 const mongoose = require('../services/mongoose');
 const scraper = require('../services/scraper');
 const util = require('./util');
+
 const fs = require('fs');
 
 // Register the shutdown criteria.
@@ -43,7 +45,12 @@ function transform(old_asset, strategy) {
       for (let field in fields.metadata) {
         asset['metadata'][field['source']] = old_asset[field['source']];
       }
-      return asset;
+      return AssetModel.update({id: asset['id']}, {
+        $set: {
+          section: asset['section'] || '',
+          metadata: asset['metadata'] || ''
+        }
+      });
     });
 }
 
@@ -88,7 +95,6 @@ function importAssets(file) {
   // Mongo data to import.
   let url = process.env.TALK_IMPORT_MONGO_URL;
 
-  // Get strategy to use.
   normalizeStrategy(file)
     .then((strategy) => new Promise((resolve, reject) => {
 
@@ -98,7 +104,7 @@ function importAssets(file) {
       db.once('open', () => {
         let assets = db.collection('assets');
         let stream = assets.find().stream();
-        
+
         stream.on('data', (doc) => {
 
           // work with the document to transform and import it

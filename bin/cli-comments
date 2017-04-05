@@ -1,0 +1,133 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+const program = require('./commander');
+
+// const CommentService = require('../services/comments');
+const mongoose = require('/services/mongoose');
+const util = require('./util');
+const fs = require('fs');
+
+const CommentService = require('/services/comments');
+const UserService = require('/services/users');
+
+// Register the shutdown criteria.
+util.onshutdown([
+  () => mongoose.disconnect()
+]);
+
+// Reads strategy file, validates it and returns an object.
+function normalizeStrategy(strategy_file) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(strategy_file, function(err, data) {
+      if (err) {
+        reject(err);
+      }
+      resolve(JSON.parse(data));
+    });
+  });
+}
+
+function transform_field(old_comment, field) {
+  switch(field['relation']) {
+  case 'Identity':
+    return old_comment[field['source']];
+  case 'FindOrCreateUser':
+    return UserService.findOrCreateUser(old_comment[field['source']]);
+  default:
+    return '';
+  }
+
+  // comment['section'] = old_asset[fields['section']['source']];
+  // for (let field in fields.metadata) {
+  //   comment['metadata'][field['source']] = old_comment[field['source']];
+  // }
+}
+
+function transform(old_comment, strategy) {
+  let fields = strategy.fields;
+  let comment = {};
+
+  for (let field in fields) {
+    comment[field] = transform_field(old_comment, strategy[field]);
+  }
+
+  return CommentService.publicCreate(comment)
+  .then((comment) => {
+    return comment;
+  })
+  .catch((err) => {
+    console.log('Failed transforming ', old_comment);
+    console.log(err);
+    util.shutdown(1);
+  });
+}
+
+/**
+* Import comments into the database.
+*/
+function importComments() {
+
+  // Mongo data to import.
+  let url = process.env.TALK_IMPORT_MONGO_URL;
+
+  // Get strategy to use.
+  normalizeStrategy(process.env.TALK_IMPORT_STRATEGY_FILE)
+  .then((strategy) => {
+
+    let options = {
+      server: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}}
+    };
+
+    // Connect to the Mongo instance.
+    let db = mongoose.createConnection(url, options);
+
+    db.once('open', function(){
+      let comments = db.collection('comments');
+      let stream = comments.find().stream();
+
+      stream.on('error', function(err){
+        console.log('Error on streaming: ', err);
+        db.close();
+        util.shutdown(1);
+      });
+      stream.on('data', function(doc) {
+
+        // work with the document to transform and import it
+        transform(doc, strategy.map.entities.comments)
+        .then((comment) => {
+          console.log('Imported comment %s .', comment.id);
+        })
+        .catch((err) => {
+          console.error(err);
+          db.close();
+          util.shutdown(1);
+        });
+      });
+    });
+  })
+  .catch((err) => {
+    console.error(err);
+    util.shutdown(1);
+  });
+}
+
+//==============================================================================
+// Setting up the program command line arguments.
+//==============================================================================
+
+program
+  .command('import')
+  .description('import comments into database via strategy file')
+  .action(importComments);
+
+program.parse(process.argv);
+
+// If there is no command listed, output help.
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+  util.shutdown();
+}
