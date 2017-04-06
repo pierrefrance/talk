@@ -1,6 +1,6 @@
 {
   "name": "Washington Post",
-  "database": "mongodb://localhost/db",
+  "database": "mongodb://localhost/original_wapo_2",
   "map": {
     "entities": {
       "assets": {
@@ -34,8 +34,8 @@
         "source": "comments",
         "fields": {
           "author_id": {
-            "source":"actor",
-            "relation":"FindOrCreateUser",
+            "source":"actor.title",
+            "relation":"FindUser",
             "type":"Object"
           },
           "asset_id": {
@@ -55,8 +55,8 @@
           },
           "tags": {
             "source":"object.tags.name",
-            "relation":"",
-            "type":"Array"
+            "relation":"Array",
+            "type":"Tags"
           },
           "parent_id": {
             "source":"targets.0.conversationID",
@@ -73,13 +73,16 @@
             "relation":"Identity",
             "type":"Date"
           },
-          "metadata": [
-            {
-              "source": "object.id",
-              "relation": "Identity",
-              "type": "String"
-            }
-          ]
+          "metadata": {
+            "relation": "Metadata",
+            "fields": [
+              {
+                "source": "object.id",
+                "relation": "Identity",
+                "type": "String"
+              }
+            ]
+          }
         }
       }
     }

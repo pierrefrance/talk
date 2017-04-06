@@ -103,7 +103,7 @@ function importAssets(file) {
       // Connect to the Mongo instance.
       let db = mongoose.createConnection(url);
 
-      db.once('open', () => {
+      db.once('open', function() {
         let assets = db.collection('assets');
         let stream = assets.find().stream();
 
