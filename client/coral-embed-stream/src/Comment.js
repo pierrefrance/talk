@@ -19,6 +19,7 @@ import FlagComment from 'coral-plugin-flags/FlagComment';
 import LikeButton from 'coral-plugin-likes/LikeButton';
 import {BestButton, IfUserCanModifyBest, BEST_TAG, commentIsBest, BestIndicator} from 'coral-plugin-best/BestButton';
 import LoadMore from 'coral-embed-stream/src/LoadMore';
+import {Slot} from 'coral-framework';
 
 import styles from './Comment.css';
 
@@ -117,7 +118,6 @@ class Comment extends React.Component {
     const flag = getActionSummary('FlagActionSummary', comment);
     const dontagree = getActionSummary('DontAgreeActionSummary', comment);
     let commentClass = parentId ? `reply ${styles.Reply}` : `comment ${styles.Comment}`;
-    commentClass += highlighted === comment.id ? ' highlighted-comment' : '';
     commentClass += comment.id === 'pending' ? ` ${styles.pendingComment}` : '';
 
     // call a function, and if it errors, call addNotification('error', ...) (e.g. to show user a snackbar)
@@ -147,18 +147,20 @@ class Comment extends React.Component {
         id={`c_${comment.id}`}
         style={{marginLeft: depth * 30}}>
         <hr aria-hidden={true} />
-        <AuthorName
-          author={comment.user}/>
-        { isStaff(comment.tags)
-          ? <TagLabel>Staff</TagLabel>
+        <div className={highlighted === comment.id ? 'highlighted-comment' : ''}>
+          <AuthorName
+            author={comment.user}/>
+          { isStaff(comment.tags)
+            ? <TagLabel>Staff</TagLabel>
           : null }
 
-        { commentIsBest(comment)
-          ? <TagLabel><BestIndicator /></TagLabel>
+          { commentIsBest(comment)
+            ? <TagLabel><BestIndicator /></TagLabel>
           : null }
-        <PubDate created_at={comment.created_at} />
+          <PubDate created_at={comment.created_at} />
+          <Slot fill="commentInfoBar" commentId={comment.id} />
 
-        <Content body={comment.body} />
+          <Content body={comment.body} />
           <div className="commentActionsLeft comment__action-container">
             <ActionButton>
               <LikeButton
@@ -187,22 +189,24 @@ class Comment extends React.Component {
                   removeBest={removeBestTag} />
               </IfUserCanModifyBest>
             </ActionButton>
+            <Slot fill="commentDetail" commentId={comment.id} />
           </div>
-        <div className="commentActionsRight comment__action-container">
-          <ActionButton>
-            <PermalinkButton articleURL={asset.url} commentId={comment.id} />
-          </ActionButton>
-          <ActionButton>
-            <FlagComment
-              flag={flag && flag.current_user ? flag : dontagree}
-              id={comment.id}
-              author_id={comment.user.id}
-              postFlag={postFlag}
-              postDontAgree={postDontAgree}
-              deleteAction={deleteAction}
-              showSignInDialog={showSignInDialog}
-              currentUser={currentUser} />
-          </ActionButton>
+          <div className="commentActionsRight comment__action-container">
+            <ActionButton>
+              <PermalinkButton articleURL={asset.url} commentId={comment.id} />
+            </ActionButton>
+            <ActionButton>
+              <FlagComment
+                flag={flag && flag.current_user ? flag : dontagree}
+                id={comment.id}
+                author_id={comment.user.id}
+                postFlag={postFlag}
+                postDontAgree={postDontAgree}
+                deleteAction={deleteAction}
+                showSignInDialog={showSignInDialog}
+                currentUser={currentUser} />
+            </ActionButton>
+          </div>
         </div>
         {
           activeReplyBox === comment.id
@@ -240,7 +244,8 @@ class Comment extends React.Component {
               showSignInDialog={showSignInDialog}
               reactKey={reply.id}
               key={reply.id}
-              comment={reply} />;
+              comment={reply}
+            />;
           })
         }
         {

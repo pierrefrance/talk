@@ -1,6 +1,6 @@
 # Talk [![CircleCI](https://circleci.com/gh/coralproject/talk.svg?style=svg)](https://circleci.com/gh/coralproject/talk)
 
-A commenting platform from [The Coral Project](https://coralproject.net). Talk enters a closed beta in March 2017, but you can download the code for our alpha here. [Read more about Talk here.](https://coralproject.net/products/talk.html)
+Talk is currently in Beta! [Read more about Talk here.](https://coralproject.net/products/talk.html)
 
 Third party licenses are available via the `/client/3rdpartylicenses.txt`
 endpoint when the server is running with built assets.
@@ -28,12 +28,6 @@ The Talk application looks for the following configuration values either as envi
 secure cookies.
 - `TALK_ROOT_URL` (*required*) - root url of the installed application externally
 available in the format: `<scheme>://<host>` without the path.
-
-- `TALK_FACEBOOK_APP_ID` (*required for login via fb*) - the Facebook app id for your Facebook
-Login enabled app.
-- `TALK_FACEBOOK_APP_SECRET` (*required for login via fb*) - the Facebook app secret for your
-Facebook Login enabled app.
-
 - `TALK_SMTP_EMAIL` (*required for email*) - the address to send emails from using the
   SMTP provider.
 - `TALK_SMTP_USERNAME` (*required for email*) - username of the SMTP provider you are using.
@@ -43,6 +37,7 @@ Facebook Login enabled app.
 - `TALK_INSTALL_LOCK` (_optional for dynamic setup_) - Defaults to `FALSE`. When `TRUE`, disables the dynamic setup endpoint.
 - `TALK_RECAPTCHA_SECRET` (*required for reCAPTCHA support*) - server secret used for enabling reCAPTCHA powered logins. If not provided it will instead default to providing only a time based lockout.
 - `TALK_RECAPTCHA_PUBLIC` (*required for reCAPTCHA support*) - client secret used for enabling reCAPTCHA powered logins. If not provided it will instead default to providing only a time based lockout.
+- `TALK_PLUGINS_JSON` (_optional_) - used to specify the plugin config via the environment
 
 Refer to the wiki page on [Configuration Loading](https://github.com/coralproject/talk/wiki/Configuration-Loading) for
 alternative methods of loading configuration during development.

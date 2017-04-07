@@ -20,7 +20,7 @@ const UserError = require('./user_error');
 const User = require('./user');
 const ValidationUserError = require('./validation_user_error');
 
-const plugins = require('../../plugins');
+const plugins = require('../../services/plugins');
 
 // Provide the core resolvers.
 let resolvers = {
@@ -49,10 +49,10 @@ let resolvers = {
  * plugin based ones. This allows plugins to extend existing resolvers as well
  * as provide new ones.
  */
-resolvers = plugins.get('server', 'resolvers').reduce((resolvers, {plugin}) => {
+resolvers = plugins.get('server', 'resolvers').reduce((acc, {plugin, resolvers}) => {
   debug(`added plugin '${plugin.name}'`);
 
-  return _.merge(resolvers, plugin.resolvers);
+  return _.merge(acc, resolvers);
 }, resolvers);
 
 module.exports = resolvers;
