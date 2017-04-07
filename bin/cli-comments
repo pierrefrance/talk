@@ -6,13 +6,9 @@
 
 const program = require('./commander');
 
-// const CommentService = require('../services/comments');
 const mongoose = require('../services/mongoose');
 const util = require('./util');
 const fs = require('fs');
-
-// const CommentService = require('/services/comments');
-// const UserService = require('/services/users');
 
 const UserModel = require('../models/user');
 const CommentModel = require('../models/comment');
@@ -96,11 +92,19 @@ function transform_field(old_comment, field) {
   switch(field['relation']) {
   case 'Identity':
     return get_value(old_comment, field);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 36f5459... More strategy on comments
   case 'FindOrCreateUser':
 
     // It needs to find a the user by the username.
     // Otherwise it will create it with the data that has available.
+<<<<<<< HEAD
     return UserModel
+=======
+    UserModel
+>>>>>>> 36f5459... More strategy on comments
       .findOneAndUpdate(
       {
         username: get_value(old_comment, field)
@@ -117,8 +121,51 @@ function transform_field(old_comment, field) {
       .catch((err) => {
         console.log('error ', err);
         return null;
+<<<<<<< HEAD
+=======
       });
+    break;
 
+  case 'FindOrCreateAsset':
+    AssetService
+      .findOrCreateByUrl(get_value(old_comment, field))
+      .then((asset) => {
+        return asset.id;
+      })
+      .catch((err) => {
+        console.log('error ', err);
+        return null;
+      });
+    break;
+
+  case 'Status':
+    return field['status'][get_value(old_comment, field)];
+
+  case 'Array':
+    return get_value(old_comment, field)
+        .map(function(t){
+          return {
+            'name': t,
+            'created_at': new Date(),
+            'assigned_by': null
+          };
+        });
+
+  case 'Parent':
+
+    // Look for the Comment that is the parent of this comment.
+    CommentModel.findOne({'metadata.id': get_value(old_comment, field)})
+      .then((comment) => {
+        return comment.id;
+      })
+      .catch((err) => {
+        console.log('error ', err);
+        return null;
+>>>>>>> 36f5459... More strategy on comments
+      });
+    break;
+
+<<<<<<< HEAD
   case 'FindOrCreateAsset':
     return AssetService
       .findOrCreateByUrl(get_value(old_comment, field))
@@ -156,6 +203,8 @@ function transform_field(old_comment, field) {
         return null;
       });
 
+=======
+>>>>>>> 36f5459... More strategy on comments
   case 'Metadata':
     return get_metadata(old_comment, field);
   }
@@ -169,16 +218,7 @@ function transform(old_comment, strategy) {
     comment[field] = transform_field(old_comment, fields[field]);
   }
 
-  return CommentService.publicCreate(comment)
-  .then((comment) => {
-    console.log('comment: ', comment);
-    return comment;
-  })
-  .catch((err) => {
-    console.log('Failed transforming ', old_comment);
-    console.log(err);
-    util.shutdown(1);
-  });
+  return CommentService.publicCreate(comment);
 }
 
 /**
@@ -190,7 +230,7 @@ function importComments(file) {
   normalizeStrategy(file)
   .then((strategy) => new Promise((resolve, reject) => {
 
-    console.log('Importing assets for strategy %s.', strategy.name);
+    console.log('Importing comments for strategy %s.', strategy.name);
 
     // Mongo data to import.
     let url = strategy.database;
@@ -211,11 +251,11 @@ function importComments(file) {
         })
         .catch((err) => {
           console.error(err);
-          util.shutdown(1);
         });
       });
 
       stream.on('error', (err) => {
+        console.log(err);
         return reject(err);
       });
 
