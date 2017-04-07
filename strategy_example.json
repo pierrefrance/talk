@@ -35,8 +35,23 @@
         "fields": {
           "author_id": {
             "source":"actor.title",
-            "relation":"FindUser",
-            "type":"Object"
+            "relation":"FindOrCreateUser",
+            "type":"Object",
+            "object": "actor",
+            "map": {
+              "fields": {
+                "username": "title",
+                "status": "status",
+                "provider": "id",
+                "metadata": [ "markers", "id", "avatar"]
+              },
+              "status": {
+                "Untouched": "PENDING",
+                "ModeratorApproved": "APPROVED",
+                "ModeratorBanned": "BANNED",
+                "ModearatorDeleted": "BANNED"
+              }
+            }
           },
           "asset_id": {
             "source":"object.context.0.uri",
@@ -50,18 +65,27 @@
           },
           "status": {
             "source":"object.status",
-            "relation":"Map",
-            "type":"String"
+            "relation":"Status",
+            "type":"String",
+            "status": {
+              "Untouched": "NONE",
+              "ModeratorApproved": "ACCEPTED",
+              "ModeratorDeleted": "REJECTED",
+              "CommunityFlagged": "NONE",
+              "ModeratorFlagged": "NONE",
+              "SystemFlagged": "REJECTED"
+            }
           },
           "tags": {
-            "source":"object.tags.name",
+            "source":"object.tags",
             "relation":"Array",
             "type":"Tags"
           },
           "parent_id": {
             "source":"targets.0.conversationID",
             "relation":"Parent",
-            "type":"String"
+            "type":"String",
+            "search_field": "metadata.id"
           },
           "created_at": {
             "source":"postedTime",
@@ -79,7 +103,8 @@
               {
                 "source": "object.id",
                 "relation": "Identity",
-                "type": "String"
+                "type": "String",
+                "name": "source_id"
               }
             ]
           }

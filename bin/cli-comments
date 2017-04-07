@@ -15,6 +15,10 @@ const fs = require('fs');
 // const UserService = require('/services/users');
 
 const UserModel = require('../models/user');
+const CommentModel = require('../models/comment');
+
+const AssetService = require('../services/assets');
+const CommentService = require('../services/comments');
 
 // Register the shutdown criteria.
 util.onshutdown([
@@ -46,38 +50,115 @@ function get_value(old_comment, field) {
   return value;
 }
 
+// TO DO: replace with UserService.findOrCreateExternalUser({id, provider, displayName}) when we have a clear idea of the provider for authentication
+function get_user(old_user, map) {
+  let user = {};
+
+  let fields = map.fields;
+  let status = map.status;
+
+  for (let field in fields) {
+    switch(field) {
+    case 'metadata':
+      user[field] = {};
+      for (let f of fields[field]) {
+        user[field][f] = old_user[f];
+      }
+      break;
+    case 'status':
+      user[field] = status[old_user['status']];
+      break;
+    case 'provider':
+      user['profiles'] = [{
+        'id': old_user[fields[field]],
+        'provider': 'wapo'
+      }];
+      break;
+    default:
+      user[field] = old_user[fields[field]];
+      break;
+    }
+  }
+  user['lowercaseUsername'] = user['username'].toLowerCase();
+
+  return user;
+}
+
+function get_metadata(old_comment, field) {
+  let metadata = {};
+  for (let f of field['fields']) {
+    metadata[f['name']] = get_value(old_comment, f);
+  }
+  return metadata;
+}
+
 function transform_field(old_comment, field) {
   switch(field['relation']) {
   case 'Identity':
     return get_value(old_comment, field);
-  case 'FindUser':
+  case 'FindOrCreateUser':
 
     // It needs to find a the user by the username.
     // Otherwise it will create it with the data that has available.
     return UserModel
-      .findOne({
+      .findOneAndUpdate(
+      {
         username: get_value(old_comment, field)
-      }).then((user) => {
-
-        // if user == null {
-        //   UserModel.create
-        // }
+      },
+      get_user(old_comment[field['object']], field['map']),
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true
+      }
+      ).then((user) => {
         return user.id;
+      })
+      .catch((err) => {
+        console.log('error ', err);
+        return null;
       });
 
-  // case 'FindOrCreateAsset':
-  // case 'Parent':
-  // case 'Map':
-  // case 'Array':
-  // case 'Metadata'
-  default:
-    return '';
-  }
+  case 'FindOrCreateAsset':
+    return AssetService
+      .findOrCreateByUrl(get_value(old_comment, field))
+      .then((asset) => {
+        return asset.id;
+      })
+      .catch((err) => {
+        console.log('error ', err);
+        return null;
+      });
 
-  // comment['section'] = old_asset[fields['section']['source']];
-  // for (let field in fields.metadata) {
-  //   comment['metadata'][field['source']] = old_comment[field['source']];
-  // }
+  case 'Status':
+    return field['status'][get_value(old_comment, field)];
+
+  case 'Array':
+    return get_value(old_comment, field).map(function(t){
+      return {
+        'name': t,
+        'created_at': new Date(),
+        'assigned_by': null
+      };
+    });
+
+  case 'Parent':
+
+    // Look for the Comment that is the parent of this comment.
+    return CommentModel
+      .findOne({'metadata.id': get_value(old_comment, field)})
+      .then((comment) => {
+        console.log('found comment? ', comment);
+        return comment.id;
+      })
+      .catch((err) => {
+        console.log('error ', err);
+        return null;
+      });
+
+  case 'Metadata':
+    return get_metadata(old_comment, field);
+  }
 }
 
 function transform(old_comment, strategy) {
@@ -88,19 +169,16 @@ function transform(old_comment, strategy) {
     comment[field] = transform_field(old_comment, fields[field]);
   }
 
-  return new Promise((resolve) => {
-    resolve(comment);
+  return CommentService.publicCreate(comment)
+  .then((comment) => {
+    console.log('comment: ', comment);
+    return comment;
+  })
+  .catch((err) => {
+    console.log('Failed transforming ', old_comment);
+    console.log(err);
+    util.shutdown(1);
   });
-
-  // return CommentService.publicCreate(comment)
-  // .then((comment) => {
-  //   return comment;
-  // })
-  // .catch((err) => {
-  //   console.log('Failed transforming ', old_comment);
-  //   console.log(err);
-  //   util.shutdown(1);
-  // });
 }
 
 /**
@@ -126,11 +204,11 @@ function importComments(file) {
 
       stream.on('data', function(doc) {
 
-        // .then((comment) => {
-        //   //console.log('Imported comment %s .', comment);
-        // })
         // work with the document to transform and import it
         transform(doc, strategy.map.entities.comments)
+        .then(() => {
+          console.log('imported');
+        })
         .catch((err) => {
           console.error(err);
           util.shutdown(1);
