@@ -92,19 +92,12 @@ function transform_field(old_comment, field) {
   switch(field['relation']) {
   case 'Identity':
     return get_value(old_comment, field);
-<<<<<<< HEAD
-=======
 
->>>>>>> 36f5459... More strategy on comments
   case 'FindOrCreateUser':
 
     // It needs to find a the user by the username.
     // Otherwise it will create it with the data that has available.
-<<<<<<< HEAD
-    return UserModel
-=======
     UserModel
->>>>>>> 36f5459... More strategy on comments
       .findOneAndUpdate(
       {
         username: get_value(old_comment, field)
@@ -121,8 +114,6 @@ function transform_field(old_comment, field) {
       .catch((err) => {
         console.log('error ', err);
         return null;
-<<<<<<< HEAD
-=======
       });
     break;
 
@@ -161,50 +152,9 @@ function transform_field(old_comment, field) {
       .catch((err) => {
         console.log('error ', err);
         return null;
->>>>>>> 36f5459... More strategy on comments
       });
     break;
 
-<<<<<<< HEAD
-  case 'FindOrCreateAsset':
-    return AssetService
-      .findOrCreateByUrl(get_value(old_comment, field))
-      .then((asset) => {
-        return asset.id;
-      })
-      .catch((err) => {
-        console.log('error ', err);
-        return null;
-      });
-
-  case 'Status':
-    return field['status'][get_value(old_comment, field)];
-
-  case 'Array':
-    return get_value(old_comment, field).map(function(t){
-      return {
-        'name': t,
-        'created_at': new Date(),
-        'assigned_by': null
-      };
-    });
-
-  case 'Parent':
-
-    // Look for the Comment that is the parent of this comment.
-    return CommentModel
-      .findOne({'metadata.id': get_value(old_comment, field)})
-      .then((comment) => {
-        console.log('found comment? ', comment);
-        return comment.id;
-      })
-      .catch((err) => {
-        console.log('error ', err);
-        return null;
-      });
-
-=======
->>>>>>> 36f5459... More strategy on comments
   case 'Metadata':
     return get_metadata(old_comment, field);
   }
