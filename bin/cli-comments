@@ -196,11 +196,12 @@ function importComments(file) {
 
         // work with the document to transform and import it
         transform(doc, strategy.map.entities.comments)
-        .then(() => {
-          console.info('Imported %s.', doc.id);
+        .then((comment) => {
+          console.info('Imported %s.', comment.id);
         })
         .catch((err) => {
-          console.error('Failed when importing documentation with ID', doc.id, err);
+          console.log(doc);
+          console.error(err);
         });
       });
 

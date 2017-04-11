@@ -115,8 +115,8 @@ function importAssets(file) {
               console.log('Imported asset %s.', asset.url);
             })
             .catch((err) => {
+              console.log(doc);
               console.error(err);
-              util.shutdown(1);
             });
         });
 
