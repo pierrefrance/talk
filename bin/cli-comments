@@ -112,7 +112,7 @@ function transform_field(old_comment, field) {
         return user.id;
       })
       .catch((err) => {
-        console.log('error ', err);
+        console.error(err);
         return null;
       });
     break;
@@ -124,7 +124,7 @@ function transform_field(old_comment, field) {
         return asset.id;
       })
       .catch((err) => {
-        console.log('error ', err);
+        console.error(err);
         return null;
       });
     break;
@@ -147,10 +147,10 @@ function transform_field(old_comment, field) {
     // Look for the Comment that is the parent of this comment.
     CommentModel.findOne({'metadata.id': get_value(old_comment, field)})
       .then((comment) => {
-        return comment.id;
+        return comment && comment.id;
       })
       .catch((err) => {
-        console.log('error ', err);
+        console.error('error ', err);
         return null;
       });
     break;
@@ -180,13 +180,13 @@ function importComments(file) {
   normalizeStrategy(file)
   .then((strategy) => new Promise((resolve, reject) => {
 
-    console.log('Importing comments for strategy %s.', strategy.name);
+    console.info('Importing comments for strategy %s.', strategy.name);
 
     // Mongo data to import.
     let url = strategy.database;
 
     // Connect to the Mongo instance.
-    let db = mongoose.createConnection(url);
+    let db = mongoose.createConnection(url, {socketOptions: {keepAlive: 120}});
 
     db.once('open', function(){
       let comments = db.collection('comments');
@@ -197,15 +197,14 @@ function importComments(file) {
         // work with the document to transform and import it
         transform(doc, strategy.map.entities.comments)
         .then(() => {
-          console.log('imported');
+          console.info('Imported %s.', doc.id);
         })
         .catch((err) => {
-          console.error(err);
+          console.error('Failed when importing documentation with ID', doc.id, err);
         });
       });
 
       stream.on('error', (err) => {
-        console.log(err);
         return reject(err);
       });
 

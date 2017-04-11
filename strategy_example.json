@@ -109,6 +109,52 @@
             ]
           }
         }
+      },
+      "users": {
+        "source": "actors",
+        "fields": {
+          "status": {
+            "source":"status",
+            "relation":"Status",
+            "type":"String",
+            "status": {
+              "Untouched": "PENDING",
+              "ModeratorApproved": "APPROVED",
+              "ModeratorBanned": "BANNED",
+              "ModearatorDeleted": "BANNED"
+            }
+          },
+          "username": {
+            "source": "title",
+            "relation": "Identity",
+            "type": "String"
+          },
+          "profiles": {
+            "source":"_id",
+            "relation": "Provider",
+            "type": "Provider"
+          },
+          "metadata": {
+            "relation": "Metadata",
+            "fields": [
+              {
+                "source": "_id",
+                "relation": "Identity",
+                "type": "String"
+              },
+              {
+                "source": "markers",
+                "relation": "Identity",
+                "type": "String"
+              },
+              {
+                "source": "avatar",
+                "relation": "Identity",
+                "type": "String"
+              }
+            ]
+          }
+        }
       }
     }
   }

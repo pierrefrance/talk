@@ -6,11 +6,15 @@
 
 const program = require('./commander');
 const inquirer = require('inquirer');
+const fs = require('fs');
+
+const mongoose = require('../services/mongoose');
+const Table = require('cli-table');
+
 const UsersService = require('../services/users');
 const UserModel = require('../models/user');
-const mongoose = require('../services/mongoose');
+
 const util = require('./util');
-const Table = require('cli-table');
 
 const validateRequired = (msg = 'Field is required', len = 1) => (input) => {
   if (input && input.length >= len) {
@@ -92,6 +96,137 @@ function getUserCreateAnswers(options) {
       choices: UserModel.USER_ROLES
     }
   ]);
+}
+
+// Reads strategy file, validates it and returns an object.
+function normalizeStrategy(strategy_file) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(strategy_file, function(err, data) {
+      if (err) {
+        reject(err);
+      }
+      resolve(JSON.parse(data));
+    });
+  });
+}
+
+function get_value(old_user, field) {
+  let value = old_user;
+  if (field['source'].includes('.')) {
+    let i = field['source'].split('.');
+    for (const f of i) {
+      value = value[f];
+    }
+  } else {
+    value = old_user[field['source']];
+  }
+  return value;
+}
+
+function get_metadata(old_comment, field) {
+  let metadata = {};
+  for (let f of field['fields']) {
+    metadata[f['name']] = get_value(old_comment, f);
+  }
+  return metadata;
+}
+
+function transform_field(old_user, field) {
+  switch(field['relation']) {
+  case 'Identity':
+    return get_value(old_user, field);
+
+  case 'Status':
+    return field['status'][get_value(old_user, field)];
+
+  case 'Metadata':
+    return get_metadata(old_user, field);
+
+  case 'Provider':
+    return [{
+      'id': get_value(old_user, field),
+      'provider': 'wapo'
+    }];
+  }
+}
+
+function transform(old_user, strategy) {
+  let fields = strategy.fields;
+  let user = {};
+
+  for (let field in fields) {
+    user[field] = transform_field(old_user, fields[field]);
+  }
+
+  if (!user['username']) {
+    return Promise.reject(new Error('Username not defined.'));
+  }
+
+  user['lowercaseUsername'] = user['username'].toLowerCase();
+
+  // It needs to find a the user by the username.
+  // Otherwise it will create it with the data that has available.
+  return UserModel
+    .findOneAndUpdate(
+    {username: user['username']},
+    user,
+    {
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true
+    }
+  );
+}
+
+/**
+* Import users into the database.
+*/
+function importUsers(file) {
+
+  // Get strategy to use.
+  normalizeStrategy(file)
+    .then((strategy) => new Promise((resolve, reject) => {
+
+      console.info('Importing users for strategy %s.', strategy.name);
+
+      // Mongo data to import.
+      let url = strategy.database;
+
+      // Connect to the Mongo instance.
+      let db = mongoose.createConnection(url, {socketOptions: {keepAlive: 120}});
+
+      db.once('open', function(){
+        let actors = db.collection('actors');
+        let stream = actors.find().stream();
+
+        stream.on('data', function(doc) {
+
+          // work with the document to transform and import it
+          transform(doc, strategy.map.entities.users)
+          .then(() => {
+            console.info('Imported %s.', doc.id);
+          })
+          .catch((err) => {
+            console.error('Failed when importing documentation with ID', doc.id, err);
+          });
+        });
+
+        stream.on('error', (err) => {
+          return reject(err);
+        });
+
+        stream.on('end', () => {
+          return resolve();
+        });
+      });
+    }))
+    .then(() => {
+      util.shutdown();
+    })
+    .catch((err) => {
+      console.error(err);
+      util.shutdown(1);
+    });
 }
 
 /**
@@ -405,6 +540,11 @@ function enableUser(userID) {
 //==============================================================================
 // Setting up the program command line arguments.
 //==============================================================================
+
+program
+  .command('import <file>')
+  .description('import users into database via strategy file')
+  .action(importUsers);
 
 program
   .command('create')
