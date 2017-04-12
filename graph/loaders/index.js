@@ -7,6 +7,7 @@ const Comments = require('./comments');
 const Metrics = require('./metrics');
 const Settings = require('./settings');
 const Users = require('./users');
+const relayLoaders = require('../relay/loaders');
 
 const plugins = require('../../services/plugins');
 
@@ -26,7 +27,8 @@ let loaders = [
       debug(`added plugin '${plugin.name}'`);
 
       return loaders;
-    })
+    }),
+  ...relayLoaders,
 ];
 
 /**

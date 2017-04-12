@@ -3,6 +3,7 @@
     "es2015"
   ],
   "plugins": [
+    "./babelRelayPlugin",
     "add-module-exports",
     "transform-class-properties",
     "transform-decorators-legacy",

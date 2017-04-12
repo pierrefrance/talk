@@ -169,7 +169,7 @@ const RECAPTCHA_PUBLIC = process.env.TALK_RECAPTCHA_PUBLIC;
  */
 const RECAPTCHA_ENABLED = RECAPTCHA_SECRET && RECAPTCHA_SECRET.length > 0 && RECAPTCHA_PUBLIC && RECAPTCHA_PUBLIC.length > 0;
 if (!RECAPTCHA_ENABLED) {
-  console.log('Recaptcha is not enabled for login/signup abuse prevention, set TALK_RECAPTCHA_SECRET and TALK_RECAPTCHA_PUBLIC to enable Recaptcha.');
+  console.error('Recaptcha is not enabled for login/signup abuse prevention, set TALK_RECAPTCHA_SECRET and TALK_RECAPTCHA_PUBLIC to enable Recaptcha.');
 }
 
 /**

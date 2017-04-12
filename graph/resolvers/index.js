@@ -19,6 +19,7 @@ const Settings = require('./settings');
 const UserError = require('./user_error');
 const User = require('./user');
 const ValidationUserError = require('./validation_user_error');
+const RelayResolvers = require('../relay/resolvers');
 
 const plugins = require('../../services/plugins');
 
@@ -54,5 +55,7 @@ resolvers = plugins.get('server', 'resolvers').reduce((acc, {plugin, resolvers})
 
   return _.merge(acc, resolvers);
 }, resolvers);
+
+resolvers = _.merge(resolvers, RelayResolvers);
 
 module.exports = resolvers;

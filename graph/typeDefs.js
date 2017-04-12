@@ -15,8 +15,11 @@ const plugins = require('../services/plugins');
  */
 const typeDefs = mergeStrings([
 
-  // Load the core graph definitions from the filesystem.
+  // Load legacy graph definitions from the filesystem.
   fs.readFileSync(path.join(__dirname, 'typeDefs.graphql'), 'utf8'),
+
+  // Load relay graph definitions from the filesystem.
+  fs.readFileSync(path.join(__dirname, 'relay/typeDefs.graphql'), 'utf8'),
 
   // Load the plugin definitions from the manager.
   ...plugins.get('server', 'typeDefs').map(({plugin, typeDefs}) => {

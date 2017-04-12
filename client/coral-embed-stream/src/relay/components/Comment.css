@@ -1,0 +1,14 @@
+.Reply {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.Comment {
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.pendingComment {
+  filter: blur(2px);
+  pointer-events: none;
+}

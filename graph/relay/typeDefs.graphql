@@ -1,0 +1,78 @@
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+interface Node {
+  id: ID!
+}
+
+type CommentConnection {
+  pageInfo: PageInfo
+  edges: [CommentEdge]
+}
+
+type CommentEdge {
+  node: CommentRelay!
+  cursor: ID!
+}
+
+type CommentRelay implements Node {
+  # The ID of the comment.
+  id: ID!
+
+  # The parent of the comment (if there is one).
+  parent: CommentRelay
+
+  # The actual comment data.
+  body: String!
+
+  # the tags on the comment
+  tags: [Tag]
+
+  # the user who authored the comment.
+  user: User
+
+  # the recent replies made against this comment.
+  recentReplies: [CommentRelay]
+
+  # the replies that were made to the comment.
+  replies(sort: SORT_ORDER = CHRONOLOGICAL, limit: Int = 3): [CommentRelay]
+
+  # The count of replies on a comment.
+  replyCount: Int
+
+  # Actions completed on the parent. Requires the `ADMIN` role.
+  actions: [Action]
+
+  # Action summaries against a comment.
+  actionSummaries: [ActionSummary]
+
+  # The asset that a comment was made on.
+  asset: Asset
+
+  # The current status of a comment.
+  status: COMMENT_STATUS!
+
+  # The time when the comment was created
+  createdAt: Date!
+}
+
+type AssetRelay {
+  # The top level comments that are attached to the asset.
+  topComments(first: Int = 10, after: String): CommentConnection
+}
+
+type Stream {
+  asset: AssetRelay
+}
+
+type Viewer {
+  stream(id: ID, url: String): Stream
+  me: User
+}
+
+type RootQuery {
+  viewer: Viewer!
+  node(id: ID!): Node
+}
