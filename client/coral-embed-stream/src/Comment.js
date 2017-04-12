@@ -224,7 +224,7 @@ class Comment extends React.Component {
         }
         {
           comment.replies &&
-          comment.replies.map(reply => {
+          comment.replies.map((reply) => {
             return <Comment
               setActiveReplyBox={setActiveReplyBox}
               disableReply={disableReply}

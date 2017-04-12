@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import styles from './CommentCount.css';
 
-const CommentCount = props => (
+const CommentCount = (props) => (
   <span className={styles.count}>{props.count}</span>
 );
 

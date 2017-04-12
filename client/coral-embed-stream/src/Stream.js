@@ -48,7 +48,7 @@ class Stream extends React.Component {
     return (
       <div id='stream'>
         {
-          comments.map(comment =>
+          comments.map((comment) =>
             <Comment
               disableReply={!open}
               setActiveReplyBox={this.props.setActiveReplyBox}

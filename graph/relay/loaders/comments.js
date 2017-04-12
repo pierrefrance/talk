@@ -104,9 +104,9 @@ const getCommentsByQuery = ({user}, {ids, statuses, asset_id, parent_id, author_
   } else {
     return cursor
     .limit(first + 1)
-    .then(data => {
+    .then((data) => {
       const result = {
-        edges: data.slice(0, first).map(node => ({
+        edges: data.slice(0, first).map((node) => ({
           node,
           cursor: node.created_at,
         })),

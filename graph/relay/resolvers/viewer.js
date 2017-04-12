@@ -7,7 +7,7 @@ const Viewer = {
     } else {
       promise = Assets.getByURL(url);
     }
-    return promise.then(asset => ({
+    return promise.then((asset) => ({
       asset,
     }));
   },

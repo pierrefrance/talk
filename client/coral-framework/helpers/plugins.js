@@ -5,8 +5,8 @@ import plugins from 'pluginsConfig';
 
 export const pluginReducers = merge(
   ...plugins
-    .filter(o => o.module.reducer)
-    .map(o => ({...o.module.reducer}))
+    .filter((o) => o.module.reducer)
+    .map((o) => ({...o.module.reducer}))
 );
 
 /**
@@ -14,8 +14,8 @@ export const pluginReducers = merge(
  */
 export function getSlotElements(slot, props = {}) {
   const components = flatten(plugins
-    .filter(o => o.module.slots[slot])
-    .map(o => o.module.slots[slot]));
+    .filter((o) => o.module.slots[slot])
+    .map((o) => o.module.slots[slot]));
   return components
     .map((component, i) => React.createElement(component, {...props, key: i}));
 }

@@ -3,12 +3,12 @@ const UsersService = require('../../services/users');
 
 const setUserStatus = ({user}, {id, status}) => {
   return UsersService.setStatus(id, status)
-  .then(res => res);
+  .then((res) => res);
 };
 
 const suspendUser = ({user}, {id, message}) => {
   return UsersService.suspendUser(id, message)
-  .then(res => {
+  .then((res) => {
     return res;
   });
 };

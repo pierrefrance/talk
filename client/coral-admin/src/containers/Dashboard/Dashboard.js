@@ -36,14 +36,14 @@ class Dashboard extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     settings: state.settings.toJS(),
     moderation: state.moderation.toJS()
   };
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   showBanUserDialog: (user, commentId) => dispatch(showBanUserDialog(user, commentId)),
   hideBanUserDialog: () => dispatch(hideBanUserDialog(false))
 });

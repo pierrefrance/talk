@@ -35,7 +35,7 @@ export default ({open, onClose}) => (
             </tr>
           </thead>
           <tbody>
-            {Object.keys(shortcut.shortcuts).map(key => (
+            {Object.keys(shortcut.shortcuts).map((key) => (
               <tr key={`${key  }tr`}>
                 <td className={styles.shortcut}><span className={styles.key}>{key}</span></td>
                 <td>{lang.t(shortcut.shortcuts[key])}</td>

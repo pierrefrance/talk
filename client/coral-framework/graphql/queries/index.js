@@ -89,7 +89,7 @@ export const loadMore = (data) => ({limit, cursor, parent_id = null, asset_id, s
           ...oldData,
           asset: {
             ...oldData.asset,
-            comments: oldData.asset.comments.map(comment => {
+            comments: oldData.asset.comments.map((comment) => {
 
               // since the dipslayed replies and the returned replies can overlap,
               // pull out the unique ones.

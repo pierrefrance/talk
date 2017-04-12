@@ -74,7 +74,7 @@ class ProfileContainer extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   user: state.user.toJS(),
   asset: state.asset.toJS(),
   auth: state.auth.toJS()

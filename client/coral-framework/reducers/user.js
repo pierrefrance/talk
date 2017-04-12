@@ -11,7 +11,7 @@ const initialState = Map({
   myAssets: [] // the assets from which myComments (above) originated
 });
 
-const purge = user => {
+const purge = (user) => {
   const {_id, created_at, updated_at, __v, roles, ...userData} = user; // eslint-disable-line
   return userData;
 };

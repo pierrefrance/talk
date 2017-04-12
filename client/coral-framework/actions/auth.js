@@ -30,11 +30,11 @@ export const showCreateUsernameDialog = () => ({type: actions.SHOW_CREATEUSERNAM
 export const hideCreateUsernameDialog = () => ({type: actions.HIDE_CREATEUSERNAME_DIALOG});
 
 const createUsernameSuccess = () => ({type: actions.CREATE_USERNAME_SUCCESS});
-const createUsernameFailure = error => ({type: actions.CREATE_USERNAME_FAILURE, error});
+const createUsernameFailure = (error) => ({type: actions.CREATE_USERNAME_FAILURE, error});
 
 export const updateUsername = ({username}) => ({type: actions.UPDATE_USERNAME, username});
 
-export const createUsername = (userId, formData) => dispatch => {
+export const createUsername = (userId, formData) => (dispatch) => {
   dispatch(createUsernameRequest());
   coralApi('/account/username', {method: 'PUT', body: formData})
     .then(() => {
@@ -42,12 +42,12 @@ export const createUsername = (userId, formData) => dispatch => {
       dispatch(hideCreateUsernameDialog());
       dispatch(updateUsername(formData));
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch(createUsernameFailure(lang.t(`error.${error.translation_key}`)));
     });
 };
 
-export const changeView = view => dispatch =>
+export const changeView = (view) => (dispatch) =>
   dispatch({
     type: actions.CHANGE_VIEW,
     view
@@ -59,18 +59,18 @@ export const cleanState = () => ({type: actions.CLEAN_STATE});
 
 const signInRequest = () => ({type: actions.FETCH_SIGNIN_REQUEST});
 const signInSuccess = (user, isAdmin) => ({type: actions.FETCH_SIGNIN_SUCCESS, user, isAdmin});
-const signInFailure = error => ({type: actions.FETCH_SIGNIN_FAILURE, error});
+const signInFailure = (error) => ({type: actions.FETCH_SIGNIN_FAILURE, error});
 
 export const fetchSignIn = (formData) => (dispatch) => {
   dispatch(signInRequest());
   return coralApi('/auth/local', {method: 'POST', body: formData})
     .then(({user}) => {
-      const isAdmin = !!user && !!user.roles.filter(i => i === 'ADMIN').length;
+      const isAdmin = !!user && !!user.roles.filter((i) => i === 'ADMIN').length;
       dispatch(signInSuccess(user, isAdmin));
       dispatch(hideSignInDialog());
       fetchMe();
     })
-    .catch(error => {
+    .catch((error) => {
       if (error.metadata) {
 
         // the user might not have a valid email. prompt the user user re-request the confirmation email
@@ -86,10 +86,10 @@ export const fetchSignIn = (formData) => (dispatch) => {
 // Sign In - Facebook
 
 const signInFacebookRequest = () => ({type: actions.FETCH_SIGNIN_FACEBOOK_REQUEST});
-const signInFacebookSuccess = user => ({type: actions.FETCH_SIGNIN_FACEBOOK_SUCCESS, user});
-const signInFacebookFailure = error => ({type: actions.FETCH_SIGNIN_FACEBOOK_FAILURE, error});
+const signInFacebookSuccess = (user) => ({type: actions.FETCH_SIGNIN_FACEBOOK_SUCCESS, user});
+const signInFacebookFailure = (error) => ({type: actions.FETCH_SIGNIN_FACEBOOK_FAILURE, error});
 
-export const fetchSignInFacebook = () => dispatch => {
+export const fetchSignInFacebook = () => (dispatch) => {
   dispatch(signInFacebookRequest());
   window.open(
     `${base}/auth/facebook`,
@@ -102,7 +102,7 @@ export const fetchSignInFacebook = () => dispatch => {
 
 const signUpFacebookRequest = () => ({type: actions.FETCH_SIGNUP_FACEBOOK_REQUEST});
 
-export const fetchSignUpFacebook = () => dispatch => {
+export const fetchSignUpFacebook = () => (dispatch) => {
   dispatch(signUpFacebookRequest());
   window.open(
     `${base}/auth/facebook`,
@@ -111,7 +111,7 @@ export const fetchSignUpFacebook = () => dispatch => {
   );
 };
 
-export const facebookCallback = (err, data) => dispatch => {
+export const facebookCallback = (err, data) => (dispatch) => {
   if (err) {
     dispatch(signInFacebookFailure(err));
     return;
@@ -131,8 +131,8 @@ export const facebookCallback = (err, data) => dispatch => {
 // Sign Up Actions
 
 const signUpRequest = () => ({type: actions.FETCH_SIGNUP_REQUEST});
-const signUpSuccess = user => ({type: actions.FETCH_SIGNUP_SUCCESS, user});
-const signUpFailure = error => ({type: actions.FETCH_SIGNUP_FAILURE, error});
+const signUpSuccess = (user) => ({type: actions.FETCH_SIGNUP_SUCCESS, user});
+const signUpFailure = (error) => ({type: actions.FETCH_SIGNUP_FAILURE, error});
 
 export const fetchSignUp = (formData, redirectUri) => (dispatch) => {
   dispatch(signUpRequest());
@@ -141,7 +141,7 @@ export const fetchSignUp = (formData, redirectUri) => (dispatch) => {
     .then(({user}) => {
       dispatch(signUpSuccess(user));
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch(signUpFailure(lang.t(`error.${error.message}`)));
     });
 };
@@ -152,12 +152,12 @@ const forgotPassowordRequest = () => ({type: actions.FETCH_FORGOT_PASSWORD_REQUE
 const forgotPassowordSuccess = () => ({type: actions.FETCH_FORGOT_PASSWORD_SUCCESS});
 const forgotPassowordFailure = () => ({type: actions.FETCH_FORGOT_PASSWORD_FAILURE});
 
-export const fetchForgotPassword = email => (dispatch) => {
+export const fetchForgotPassword = (email) => (dispatch) => {
   dispatch(forgotPassowordRequest(email));
   const redirectUri = pym.parentUrl || location.href;
   coralApi('/account/password/reset', {method: 'POST', body: {email, loc: redirectUri}})
     .then(() => dispatch(forgotPassowordSuccess()))
-    .catch(error => dispatch(forgotPassowordFailure(error)));
+    .catch((error) => dispatch(forgotPassowordFailure(error)));
 };
 
 // LogOut Actions
@@ -166,28 +166,28 @@ const logOutRequest = () => ({type: actions.LOGOUT_REQUEST});
 const logOutSuccess = () => ({type: actions.LOGOUT_SUCCESS});
 const logOutFailure = () => ({type: actions.LOGOUT_FAILURE});
 
-export const logout = () => dispatch => {
+export const logout = () => (dispatch) => {
   dispatch(logOutRequest());
   return coralApi('/auth', {method: 'DELETE'})
     .then(() => {
       dispatch(logOutSuccess());
       fetchMe();
     })
-    .catch(error => dispatch(logOutFailure(error)));
+    .catch((error) => dispatch(logOutFailure(error)));
 };
 
 // LogOut Actions
 
 export const validForm = () => ({type: actions.VALID_FORM});
-export const invalidForm = error => ({type: actions.INVALID_FORM, error});
+export const invalidForm = (error) => ({type: actions.INVALID_FORM, error});
 
 // Check Login
 
 const checkLoginRequest = () => ({type: actions.CHECK_LOGIN_REQUEST});
 const checkLoginSuccess = (user, isAdmin) => ({type: actions.CHECK_LOGIN_SUCCESS, user, isAdmin});
-const checkLoginFailure = error => ({type: actions.CHECK_LOGIN_FAILURE, error});
+const checkLoginFailure = (error) => ({type: actions.CHECK_LOGIN_FAILURE, error});
 
-export const checkLogin = () => dispatch => {
+export const checkLogin = () => (dispatch) => {
   dispatch(checkLoginRequest());
   coralApi('/auth')
     .then((result) => {
@@ -195,10 +195,10 @@ export const checkLogin = () => dispatch => {
         throw new Error('Not logged in');
       }
 
-      const isAdmin = !!result.user.roles.filter(i => i === 'ADMIN').length;
+      const isAdmin = !!result.user.roles.filter((i) => i === 'ADMIN').length;
       dispatch(checkLoginSuccess(result.user, isAdmin));
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
       dispatch(checkLoginFailure(`${error.translation_key}`));
     });
@@ -208,13 +208,13 @@ const verifyEmailRequest = () => ({type: actions.VERIFY_EMAIL_REQUEST});
 const verifyEmailSuccess = () => ({type: actions.VERIFY_EMAIL_SUCCESS});
 const verifyEmailFailure = () => ({type: actions.VERIFY_EMAIL_FAILURE});
 
-export const requestConfirmEmail = (email, redirectUri) => dispatch => {
+export const requestConfirmEmail = (email, redirectUri) => (dispatch) => {
   dispatch(verifyEmailRequest());
   return coralApi('/users/resend-verify', {method: 'POST', body: {email}, headers: {'X-Pym-Url': redirectUri}})
     .then(() => {
       dispatch(verifyEmailSuccess());
     })
-    .catch(err => {
+    .catch((err) => {
 
       // email might have already been verifyed
       dispatch(verifyEmailFailure(err));

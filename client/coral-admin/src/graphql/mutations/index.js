@@ -54,9 +54,9 @@ export const setCommentStatus = graphql(SET_COMMENT_STATUS, {
         },
         updateQueries: {
           ModQueue: (oldData) => {
-            const premod = oldData.premod.filter(c => c.id !== commentId);
-            const flagged = oldData.flagged.filter(c => c.id !== commentId);
-            const rejected = oldData.rejected.filter(c => c.id !== commentId);
+            const premod = oldData.premod.filter((c) => c.id !== commentId);
+            const flagged = oldData.flagged.filter((c) => c.id !== commentId);
+            const rejected = oldData.rejected.filter((c) => c.id !== commentId);
             const premodCount = premod.length < oldData.premod.length ? oldData.premodCount - 1 : oldData.premodCount;
             const flaggedCount = flagged.length < oldData.flagged.length ? oldData.flaggedCount - 1 : oldData.flaggedCount;
             const rejectedCount = rejected.length < oldData.rejected.length ? oldData.rejectedCount - 1 : oldData.rejectedCount;
@@ -82,10 +82,10 @@ export const setCommentStatus = graphql(SET_COMMENT_STATUS, {
         },
         updateQueries: {
           ModQueue: (oldData) => {
-            const comment = oldData.premod.concat(oldData.flagged).filter(c => c.id === commentId)[0];
+            const comment = oldData.premod.concat(oldData.flagged).filter((c) => c.id === commentId)[0];
             const rejected = [comment].concat(oldData.rejected);
-            const premod = oldData.premod.filter(c => c.id !== commentId);
-            const flagged = oldData.flagged.filter(c => c.id !== commentId);
+            const premod = oldData.premod.filter((c) => c.id !== commentId);
+            const flagged = oldData.flagged.filter((c) => c.id !== commentId);
             const premodCount = premod.length < oldData.premod.length ? oldData.premodCount - 1 : oldData.premodCount;
             const flaggedCount = flagged.length < oldData.flagged.length ? oldData.flaggedCount - 1 : oldData.flaggedCount;
             const rejectedCount = oldData.rejectedCount + 1;

@@ -19,7 +19,7 @@ const lang = new I18n(translations);
 
 const Comment = ({actions = [], ...props}) => {
   const links = linkify.getMatches(props.comment.body);
-  const linkText = links ? links.map(link => link.raw) : [];
+  const linkText = links ? links.map((link) => link.raw) : [];
   const actionSummaries = props.comment.action_summaries;
   return (
     <li tabIndex={props.index} className={`mdl-card ${props.selected ? 'mdl-shadow--8dp' : 'mdl-shadow--2dp'} ${styles.Comment} ${styles.listItem}`}>

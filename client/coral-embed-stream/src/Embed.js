@@ -285,13 +285,13 @@ class Embed extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   auth: state.auth.toJS(),
   userData: state.user.toJS(),
   asset: state.asset.toJS()
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   requestConfirmEmail: () => dispatch(requestConfirmEmail()),
   loadAsset: (asset) => dispatch(fetchAssetSuccess(asset)),
   addNotification: (type, text) => addNotification(type, text),
@@ -301,7 +301,7 @@ const mapDispatchToProps = dispatch => ({
   updateCountCache: (id, count) => dispatch(updateCountCache(id, count)),
   viewAllComments: () => dispatch(viewAllComments()),
   logout: () => dispatch(logout()),
-  dispatch: d => dispatch(d)
+  dispatch: (d) => dispatch(d)
 });
 
 export default compose(
