@@ -91,13 +91,15 @@ function get_metadata(old_comment, field) {
 function transform_field(old_comment, field) {
   switch(field['relation']) {
   case 'Identity':
-    return get_value(old_comment, field);
+    return new Promise((resolve) => {
+      return resolve(get_value(old_comment, field));
+    });
 
   case 'FindOrCreateUser':
 
     // It needs to find a the user by the username.
     // Otherwise it will create it with the data that has available.
-    UserModel
+    return UserModel
       .findOneAndUpdate(
       {
         username: get_value(old_comment, field)
@@ -115,10 +117,9 @@ function transform_field(old_comment, field) {
         console.error(err);
         return null;
       });
-    break;
 
   case 'FindOrCreateAsset':
-    AssetService
+    return AssetService
       .findOrCreateByUrl(get_value(old_comment, field))
       .then((asset) => {
         return asset.id;
@@ -127,25 +128,28 @@ function transform_field(old_comment, field) {
         console.error(err);
         return null;
       });
-    break;
 
   case 'Status':
-    return field['status'][get_value(old_comment, field)];
+    return new Promise((resolve) => {
+      return resolve(field['status'][get_value(old_comment, field)]);
+    });
 
   case 'Array':
-    return get_value(old_comment, field)
-        .map(function(t){
-          return {
-            'name': t,
-            'created_at': new Date(),
-            'assigned_by': null
-          };
-        });
+    return new Promise((resolve) => {
+      return resolve(get_value(old_comment, field)
+          .map(function(t){
+            return {
+              'name': t,
+              'created_at': new Date(),
+              'assigned_by': null
+            };
+          }));
+    });
 
   case 'Parent':
 
     // Look for the Comment that is the parent of this comment.
-    CommentModel.findOne({'metadata.id': get_value(old_comment, field)})
+    return CommentModel.findOne({'metadata.id': get_value(old_comment, field)})
       .then((comment) => {
         return comment && comment.id;
       })
@@ -153,22 +157,32 @@ function transform_field(old_comment, field) {
         console.error('error ', err);
         return null;
       });
-    break;
 
   case 'Metadata':
-    return get_metadata(old_comment, field);
+    return new Promise((resolve) => {
+      return resolve(get_metadata(old_comment, field));
+    });
   }
 }
 
 function transform(old_comment, strategy) {
   let fields = strategy.fields;
   let comment = {};
+  let promises = [];
 
   for (let field in fields) {
-    comment[field] = transform_field(old_comment, fields[field]);
+    promises.push(
+      transform_field(old_comment, fields[field])
+      .then((value) => {
+        comment[field] = value;
+      })
+    );
   }
 
-  return CommentService.publicCreate(comment);
+  return Promise.all(promises)
+      .then(() => {
+        return CommentService.publicCreate(comment);
+      });
 }
 
 /**
@@ -200,7 +214,6 @@ function importComments(file) {
           console.info('Imported %s.', comment.id);
         })
         .catch((err) => {
-          console.log(doc);
           console.error(err);
         });
       });
