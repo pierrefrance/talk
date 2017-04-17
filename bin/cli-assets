@@ -101,7 +101,15 @@ function importAssets(file) {
       let url = strategy.database;
 
       // Connect to the Mongo instance.
-      let db = mongoose.createConnection(url, {socketOptions: {keepAlive: 120}});
+      let db = mongoose.createConnection(url, {
+        server: {
+          socketOptions: {
+            keepAlive: 120,
+            socketTimeoutMS: 0,
+            connectionTimeout: 0
+          }
+        }
+      });
 
       db.once('open', function() {
         let assets = db.collection('assets');
