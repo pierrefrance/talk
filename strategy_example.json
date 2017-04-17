@@ -1,6 +1,6 @@
 {
   "name": "Washington Post",
-  "database": "mongodb://localhost/original_wapo_2",
+  "database": "mongodb://127.0.0.1/original_wapo_2",
   "map": {
     "entities": {
       "assets": {
