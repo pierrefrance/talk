@@ -29,7 +29,8 @@ console.log(`Using ${pluginsConfigPath} as the plugin configuration path`);
 
 const buildTargets = [
   'coral-admin',
-  'coral-docs'
+  'coral-docs',
+  'coral-login'
 ];
 
 const buildEmbeds = [
