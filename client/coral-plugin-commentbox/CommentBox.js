@@ -153,6 +153,7 @@ class CommentBox extends Component {
         <div className={`${name}-char-count ${length > charCount ? `${name}-char-max` : ''}`}>
           {charCount && `${charCount - length} ${lang.t('characters-remaining')}`}
         </div>
+      <Slot fill="commentBoxContent" />
         <div className={`${name}-button-container`}>
           <Slot
             fill="commentBoxDetail"

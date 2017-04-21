@@ -35,6 +35,7 @@ import ConfigureStreamContainer from 'coral-configure/containers/ConfigureStream
 import HighlightedComment from './Comment';
 import LoadMore from './LoadMore';
 import NewCount from './NewCount';
+import {Slot} from 'coral-framework';
 
 class Embed extends React.Component {
 
@@ -163,6 +164,8 @@ class Embed extends React.Component {
     return (
       <div style={expandForLogin}>
         <div className="commentStream">
+          <Slot fill="topCommentStream" />
+
           <TabBar onChange={this.changeTab} activeTab={activeTab}>
             <Tab><Count count={asset.totalCommentCount}/></Tab>
             <Tab>{lang.t('myProfile')}</Tab>
@@ -179,6 +182,7 @@ class Embed extends React.Component {
               }}>{lang.t('showAllComments')}</Button>
           }
           <TabContent show={activeTab === 0}>
+
             { loggedIn ? userBox : null }
             {
               openStream
@@ -224,6 +228,8 @@ class Embed extends React.Component {
               offset={signInOffset}/>}
             {loggedIn &&  user && <ChangeUsernameContainer loggedIn={loggedIn} offset={signInOffset} user={user} />}
             {loggedIn && <ModerationLink assetId={asset.id} isAdmin={isAdmin} />}
+
+            <Slot fill="commentStream"/>
 
             {/* the highlightedComment is isolated after the user followed a permalink */}
             {
