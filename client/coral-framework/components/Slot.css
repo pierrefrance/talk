@@ -1,3 +1,11 @@
 .inline {
   display: inline-block;
 }
+
+.debug {
+  background: coral;
+}
+
+.debug:hover {
+
+}

@@ -3,6 +3,10 @@ import merge from 'lodash/merge';
 import flatten from 'lodash/flatten';
 import plugins from 'pluginsConfig';
 
+export const debug = () => {
+
+};
+
 export const pluginReducers = merge(
   ...plugins
     .filter(o => o.module.reducer)

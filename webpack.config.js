@@ -141,6 +141,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         'VERSION': `"${require('./package.json').version}"`,
+        'DEBUG_PLUGINS': JSON.stringify(process.env.DEBUG_PLUGINS)
       }
     }),
     new webpack.EnvironmentPlugin({
