@@ -21,7 +21,12 @@ networkInterface.use([{
     if (!req.options.headers) {
       req.options.headers = {};  // Create the header object if needed.
     }
-    req.options.headers['authorization'] = `Bearer ${Storage.getItem('token')}`;
+
+    let token = Storage.getItem('token');
+    if (token) {
+      req.options.headers['authorization'] = `Bearer ${token}`;
+    }
+
     next();
   }
 }]);

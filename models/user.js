@@ -139,7 +139,7 @@ const UserSchema = new mongoose.Schema({
   },
 
   toJSON: {
-    transform: function (doc, ret) {
+    transform: function(doc, ret) {
       delete ret.password;
       delete ret._id;
       delete ret.__v;

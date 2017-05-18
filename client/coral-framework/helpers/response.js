@@ -5,11 +5,15 @@ const buildOptions = (inputOptions = {}) => {
     method: 'GET',
     headers: {
       Accept: 'application/json',
-      Authorization: `Bearer ${Storage.getItem('token')}`,
       'Content-Type': 'application/json'
     },
     credentials: 'same-origin'
   };
+
+  let token = Storage.getItem('token');
+  if (token) {
+    defaultOptions.headers['Authorization'] = `Bearer ${token}`;
+  }
 
   let options = Object.assign({}, defaultOptions, inputOptions);
   options.headers = Object.assign(

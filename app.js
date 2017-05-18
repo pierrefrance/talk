@@ -8,6 +8,7 @@ const {passport} = require('./services/passport');
 const plugins = require('./services/plugins');
 const enabled = require('debug').enabled;
 const errors = require('./errors');
+const cookieParser = require('cookie-parser');
 const {createGraphOptions} = require('./graph');
 const apollo = require('graphql-server-express');
 const accepts = require('accepts');
@@ -81,7 +82,7 @@ app.use(passport.initialize());
 
 // Attach the authentication middleware, this will be responsible for decoding
 // (if present) the JWT on the request.
-app.use('/api', authentication);
+app.use('/api', cookieParser(), authentication);
 
 //==============================================================================
 // GraphQL Router
