@@ -1,86 +1,86 @@
 en:
   bandialog:
-    are_you_sure: "Are you sure you would like to ban {0}?"
-    ban_user: "Ban User?"
-    banned_user: "Banned User"
-    cancel: Cancel
-    note: "Note: Banning this user will also place this comment in the Rejected queue."
-    yes_ban_user: "Yes, Ban User"
-  bio_offensive: "This bio is offensive"
-  cancel: Cancel
-  characters_remaining: "characters remaining"
+    are_you_sure: "Êtes-vous certain de vouloir bannir {0} ?"
+    ban_user: "Bannir cet utilisateur ?"
+    banned_user: "Utilisateur banni"
+    cancel: Annuler
+    note: "Note: bannir cet utilisateur rejettera aussi ses commentaires."
+    yes_ban_user: "Oui, bannir cet utilisateur"
+  bio_offensive: "Cette bio est offensante"
+  cancel: Annuler
+  characters_remaining: "caractères restants."
   comment:
-    anon: Anonymous
-    ban_user: "Ban User"
-    comment: "Post a comment"
-    flagged: flagged
-    view_context: "View context"
+    anon: Anonyme
+    ban_user: "Bannir cet utilisateur"
+    comment: "Publier un commentaire"
+    flagged: signalé
+    view_context: "Voir le contexte"
   comment_box:
-    post: "Post"
-    cancel: "Cancel"
-    reply: "Reply"
-    comment: "Post a comment"
-    name: "Name"
-    comment_post_notif: "Your comment has been posted."
-    comment_post_notif_premod: "Thank you for posting. Our moderation team will review your comment shortly."
-    comment_post_banned_word:  "Your comment contains one or more words that are not permitted, so it will not be published. If you think this message is incorrect, please contact our moderation team."
-    characters_remaining: "characters remaining"
-  comment_is_best: "This comment is one of the best"
-  comment_offensive: "This comment is offensive"
-  comment_plural: Comments
-  comment_post_banned_word: "Your comment contains one or more words that are not permitted, so it will not be published. If you think this message is incorrect, please contact our moderation team."
-  comment_post_notif: "Your comment has been posted."
-  comment_post_notif_premod: "Thank you for posting. Our moderation team will review your comment shortly."
+    post: "Publier"
+    cancel: "Annuler"
+    reply: "Répondre"
+    comment: "Publier un commentaire"
+    name: "Nom"
+    comment_post_notif: "Votre commentaire a été publié."
+    comment_post_notif_premod: "Merci pour votre participation. Notre équipe de modération va évaluer votre commentaire rapidement."
+    comment_post_banned_word:  "Votre commentaire contient un ou plusieurs mots non autorisés, il ne sera pas publié. Si vous pensez qu'il s'agit d'une erreur, merci de contacter l'équipe de modération."
+    characters_remaining: "caractères restants."
+  comment_is_best: "Ce commentaire fait partie des meilleurs"
+  comment_offensive: "Ce commentaire est offensant"
+  comment_plural: Commentaires
+  comment_post_banned_word: "Votre commentaire contient un ou plusieurs mots non autorisés, il ne sera pas publié. Si vous pensez qu'il s'agit d'une erreur, merci de contacter l'équipe de modération."
+  comment_post_notif: "Votre commentaire a été publié."
+  comment_post_notif_premod: "Merci pour votre participation. Notre équipe de modération va évaluer votre commentaire rapidement."
   community:
-    account_creation_date: "Account Creation Date"
-    active: Active
-    admin: Administrator
-    ads_marketing: "This looks like an ad/marketing"
-    are_you_sure: "Are you sure you would like to ban {0}?"
-    ban_user: "Ban User?"
-    banned: Banned
-    banned_user: "Banned User"
-    cancel: Cancel
-    dont_like_username: "I don't like this username"
-    flaggedaccounts: "Flagged Usernames"
-    flags: Flags
-    impersonating: "This user is impersonating"
-    loading: "Loading results"
-    moderator: Moderator
-    newsroom_role: "Newsroom Role"
-    no_flagged_accounts: "The Account Flags queue is currently empty."
-    no_results: "No users found with that user name or email address. They're hiding!"
-    note: "Note: Banning this user will not let them edit comment or remove anything."
-    offensive: "This comment is offensive"
-    other: Other
-    people: People
-    role: "Select role..."
-    select_status: "Select status..."
-    spam_ads: "Spam/Ads"
-    staff: "Staff"
-    status: Status
-    username_and_email: "Username and Email"
-    yes_ban_user: "Yes Ban User"
+    account_creation_date: "Date de la création du compte utilisateur"
+    active: Actif
+    admin: Administrateur
+    ads_marketing: "Ceci ressemble à une publicité"
+    are_you_sure: "Êtes-vous sûr de vouloir bannir {0} ?"
+    ban_user: "Bannir cet utilisateur ?"
+    banned: Banni
+    banned_user: "Utilisateur banni"
+    cancel: Annuler
+    dont_like_username: "Je trouve ce nom d'utilisateur offensant"
+    flaggedaccounts: "Noms d'utilisateurs signalés"
+    flags: Signalements
+    impersonating: "Cet utilisateur se fait passer pour"
+    loading: "Chargement des résultats"
+    moderator: Moderateur
+    newsroom_role: "Role dans l'équipe rédactionnelle"
+    no_flagged_accounts: "La liste de comptes signalés est vide."
+    no_results: "Aucun utilisateur n'a été trouvé avec ce nom ou cette adresse e-mail. Ils se cachent !"
+    note: "Note: bannir cet utilisateur ne lui permettra pas de modifier ou de supprimer quoi que ce soit."
+    offensive: "Ce commentaire est offensant"
+    other: Autre
+    people: Utilisateurs
+    role: "Sélectionner un rôle"
+    select_status: "Sélectionner un statut..."
+    spam_ads: "Spam/Pubs"
+    staff: "Équipe"
+    status: Statut
+    username_and_email: "Nom d'utilisateur et e-mail"
+    yes_ban_user: "Oui, bannir cet utilisateur"
   configure:
-    apply: Apply
-    banned_word_text: "Comments which contain these words or phrases (not case-sensitive) will be automatically removed from the comment stream. Type a word and press Enter or Tab to add. Optionally paste a comma-separated list."
-    banned_words_title: "Banned words list"
-    close: "Close"
-    close_after: "Close comments after"
-    close_stream: "Close Stream"
-    close_stream_configuration: "This comment stream is currently closed. By opening this comment stream new comments may be submitted and displayed"
-    closed_comments_desc: "Write a message to be displayed when when your comment stream is closed and no longer accepting comments."
-    closed_comments_label: "Write a message..."
-    closed_stream_settings: "Closed Stream Message"
-    comment_count_error: "Please enter a valid number."
-    comment_count_header: "Limit Comment Length"
-    comment_count_text_post: characters
-    comment_count_text_pre: "Comments will be limited to"
-    comment_settings: Settings
-    comment_stream: "Comment Stream"
-    comment_stream_will_close: "The comment stream will close in"
-    community: Community
-    configure: Configure
+    apply: Valider
+    banned_word_text: "Les commentaires qui contiennent ces mots (insensible à la casse) seront automatiquement supprimés du flux de commentaires. Entrez un mot et tapez sur Entrée ou Tabulation pour en ajouter un. Également, vous pouvez ajouter une liste de mots séparés par des virgules."
+    banned_words_title: "Liste des mots bannis"
+    close: "Fermer"
+    close_after: "Fermer les commentaires après"
+    close_stream: "Fermer le flux"
+    close_stream_configuration: "Ce flux de commentaires est actuellement fermé. En ouvrant ce flux, de nouveaux commentaires pourront être ajoutés."
+    closed_comments_desc: "Entrez un message qui sera affiché lorsque le flux de commentaires est clos."
+    closed_comments_label: "Entrez a message..."
+    closed_stream_settings: "Message des commentaires clos"
+    comment_count_error: "Merci d'entrer un nombre valide."
+    comment_count_header: "Limiter la longueur des commentaires"
+    comment_count_text_post: caractères
+    comment_count_text_pre: "Les commentaires seront limités à"
+    comment_settings: Réglages
+    comment_stream: "Flux de commentaires"
+    comment_stream_will_close: "Le flux de commentaires sera fermé dans"
+    community: Communauté
+    configure: Configurer
     copy_and_paste: "Copy and paste code below into your CMS to embed your comment box in your articles"
     custom_css_url: "Custom CSS URL"
     custom_css_url_desc: "URL of a CSS stylesheet that will override default Embed Stream styles. Can be internal or external."
